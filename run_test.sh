@@ -125,10 +125,6 @@ while getopts "f:u:b:dl:xvi:n:sh" opt; do
     esac
 done
 
-if ${scale} ; then
-  echo "Scaling up to ${nodes} nodes"
-fi
-
 if $shut_down ; then
   shutdown
   exit 0
