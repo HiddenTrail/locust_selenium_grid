@@ -11,7 +11,7 @@ services:
      - "8089:8089"
     volumes:
       - ./:/opt/locust/tests
-    command: locust -f /opt/locust/tests/${LOCUSTFILE:-locustfiles/web_browser/clinical_tests.py} --master -H ${BASE_URL:-http://example.com} --loglevel ${LOG_LEVEL:-DEBUG} --logfile /opt/locust/tests/${LOG_FILE_M:-results/master_logfile.log} ${LOCUST_VARIABLES:-}
+    command: locust -f /opt/locust/tests/${LOCUSTFILE:-locustfiles/web_ui_example.py} --master -H ${BASE_URL:-http://example.com} --loglevel ${LOG_LEVEL:-DEBUG} --logfile /opt/locust/tests/${LOG_FILE_M:-results/master_logfile.log} ${LOCUST_VARIABLES:-}
   
   locust-worker:
     build:
@@ -24,6 +24,6 @@ services:
       - SELENIUM_BROWSER=${SELENIUM_BROWSER:-chrome}
     volumes:
       - ./:/opt/locust/tests
-    command: locust -f /opt/locust/tests/${LOCUSTFILE:-locustfiles/web_browser/clinical_tests.py} --worker --master-host ${MASTER_HOST:-locust-master} --loglevel ${LOG_LEVEL:-DEBUG} --logfile /opt/locust/tests/${LOG_FILE_W:-results/worker_logfile.log} ${LOCUST_VARIABLES:-}
+    command: locust -f /opt/locust/tests/${LOCUSTFILE:-locustfiles/web_ui_example.py} --worker --master-host ${MASTER_HOST:-locust-master} --loglevel ${LOG_LEVEL:-DEBUG} --logfile /opt/locust/tests/${LOG_FILE_W:-results/worker_logfile.log} ${LOCUST_VARIABLES:-}
     extra_hosts:
       - "host.docker.internal:host-gateway"
