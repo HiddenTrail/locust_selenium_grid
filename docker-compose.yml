@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  locust-master:
+    build:
+      context: .
+    image: ${LOCUST_IMAGE_TAG:-perf-locust-selenium:latest}
+    environment:
+      - PYTHONPATH=/opt/locust/tests
+    ports:
+     - "8089:8089"
+    volumes:
+      - ./:/opt/locust/tests
+    command: locust -f /opt/locust/tests/${LOCUSTFILE:-locustfiles/web_browser/clinical_tests.py} --master -H ${BASE_URL:-http://example.com} --loglevel ${LOG_LEVEL:-DEBUG} --logfile /opt/locust/tests/${LOG_FILE_M:-results/master_logfile.log} ${LOCUST_VARIABLES:-}
+  
+  locust-worker:
+    build:
+      context: .
+    image: ${LOCUST_IMAGE_TAG:-perf-locust-selenium:latest}
+    environment:
+      - PYTHONPATH=/opt/locust/tests
+      - SELENIUM_GRID_ADDR=${SELENIUM_GRID_ADDR:-http://host.docker.internal:4444}
+      - HEADLESS=${HEADLESS:-True}
+      - SELENIUM_BROWSER=${SELENIUM_BROWSER:-chrome}
+    volumes:
+      - ./:/opt/locust/tests
+    command: locust -f /opt/locust/tests/${LOCUSTFILE:-locustfiles/web_browser/clinical_tests.py} --worker --master-host ${MASTER_HOST:-locust-master} --loglevel ${LOG_LEVEL:-DEBUG} --logfile /opt/locust/tests/${LOG_FILE_W:-results/worker_logfile.log} ${LOCUST_VARIABLES:-}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
