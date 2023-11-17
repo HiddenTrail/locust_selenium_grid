@@ -1,0 +1,115 @@
+version: '3'
+
+services:
+  selenium-grid-chrome:
+    image: selenium/standalone-chrome:latest
+    container_name: perf-selenium-grid
+    shm_size: 2gb
+    environment:
+      - SE_NODE_SESSION_TIMEOUT=60
+      - SE_NODE_MAX_SESSIONS=5
+      - SE_NODE_OVERRIDE_MAX_SESSIONS=true
+      - VNC_NO_PASSWORD=1
+      - START_XVFB=${START_XVFB:-false}
+      - SE_SCREEN_WIDTH=1920
+      - SE_SCREEN_HEIGHT=1080
+    ports:
+      - "4444:4444"
+      - "7900:7900"
+    networks:
+      - selenium-grid-network
+
+  selenium-grid-edge:
+    image: selenium/standalone-edge:latest
+    container_name: perf-selenium-grid
+    shm_size: 2gb
+    environment:
+      - SE_NODE_SESSION_TIMEOUT=60
+      - SE_NODE_MAX_SESSIONS=5
+      - SE_NODE_OVERRIDE_MAX_SESSIONS=true
+      - VNC_NO_PASSWORD=1
+      - START_XVFB=${START_XVFB:-false}
+      - SE_SCREEN_WIDTH=1920
+      - SE_SCREEN_HEIGHT=1080
+    ports:
+      - "4444:4444"
+      - "7900:7900"
+    networks:
+      - selenium-grid-network
+
+  selenium-hub:
+    image: selenium/hub:latest
+    container_name: perf-selenium-hub
+    ports:
+      - "4442:4442"
+      - "4443:4443"
+      - "4444:4444"
+    networks:
+      - selenium-grid-network
+
+  selenium-node-chrome:
+    image: selenium/node-chrome:latest
+    shm_size: 2gb
+    depends_on:
+      - selenium-hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - START_XVFB=${START_XVFB:-false}
+      - SE_SCREEN_WIDTH=1920
+      - SE_SCREEN_HEIGHT=1080
+      - SE_NODE_SESSION_TIMEOUT=60
+      - VNC_NO_PASSWORD=1
+    networks:
+      - selenium-grid-network
+
+  selenium-node-edge:
+    image: selenium/node-edge:latest
+    shm_size: 2gb
+    depends_on:
+      - selenium-hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - START_XVFB=${START_XVFB:-false}
+      - SE_SCREEN_WIDTH=1920
+      - SE_SCREEN_HEIGHT=1080
+      - SE_NODE_SESSION_TIMEOUT=60
+      - VNC_NO_PASSWORD=1
+    networks:
+      - selenium-grid-network
+
+  chrome_video:
+    image: selenium/video:latest
+    volumes:
+      - ./videos:/videos
+    depends_on:
+      - selenium-grid-chrome
+    environment:
+      - SE_SCREEN_WIDTH=1920
+      - SE_SCREEN_HEIGHT=1080
+      - DISPLAY_CONTAINER_NAME=selenium-grid-chrome
+      - FILE_NAME=${VIDEO_NAME:-chrome_video.mp4}
+    networks:
+      - selenium-grid-network
+  
+  edge_video:
+    image: selenium/video:latest
+    volumes:
+      - ./videos:/videos
+    depends_on:
+      - selenium-grid-edge
+    environment:
+      - SE_SCREEN_WIDTH=1920
+      - SE_SCREEN_HEIGHT=1080
+      - DISPLAY_CONTAINER_NAME=selenium-grid-edge
+      - FILE_NAME=${VIDEO_NAME:-edge_video.mp4}
+    networks:
+      - selenium-grid-network
+
+networks:
+  selenium-grid-network:
+    driver: bridge
+    name: selenium-grid-network

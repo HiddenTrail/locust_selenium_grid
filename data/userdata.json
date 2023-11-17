@@ -1,0 +1,10 @@
+{
+    "test": {
+        "username": "standard_user",
+        "password": "secret_sauce"
+    },
+    "development": {
+        "username": "username",
+        "password": "password"
+    }
+}
