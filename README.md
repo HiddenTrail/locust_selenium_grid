@@ -24,7 +24,7 @@ Script has a help option to list all the available options:
 
 Run "web_ui_example" web ui performance tests with chrome and iterate test 2 times:
 ``` shell
-./run_test.sh -f locustfiles/web_ui_example.py -u https://www.saucedemo.com -x -1 2
+./run_test.sh -f locustfiles/web_ui_example.py -u https://www.saucedemo.com -x -i 2
 ```
 
 Run "web_ui_example" web ui performance tests with edge. Scale selenium nodes to 3 and iterate each node 2 times (equals to 6 itearations):
